@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  body {
+    @apply font-primary bg-primary text-white leading-loose;
+  }
+
+  .h1 {
+    @apply text-[44px] xl:text-[65px] leading-[1.1] font-semibold
+  }
+
+  .h2 {
+    @apply text-[36px] xl:text-[60px] leading-[1.1] font-semibold
+  }
+
+  .h3 {
+    @apply text-[24px] xl:text-[40px] leading-[1.1] font-semibold
+  }
+
+
+  .text-outline {
+    -webkit-text-stroke: 1px #ffffff;
+  }
+
+  .text-outline-hover {
+    -webkit-text-stroke: 1px #00ff99;
+  }
+}
