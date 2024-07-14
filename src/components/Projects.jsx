@@ -1,4 +1,8 @@
 
+import project1 from '../assets/projects/parlur.png'
+import project2 from '../assets/projects/bistro.png'
+import project3 from '../assets/projects/sir-eco-full.png'
+
 
 export const projects = [
     {
@@ -7,7 +11,7 @@ export const projects = [
         title: "Project 1",
         description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dicta velit consectetur ex veritatis. Obcaecati quibusdam explicabo ullam et labore quo.",
         stack: [{ name: "react.js" }, { name: "tailwind css" }, { name: "javascript" }, { name: "node.js" }],
-        thumb: "/src/assets/projects/sir-eco-full.png",
+        thumb: project1,
         live: "",
         github: "",
     },
@@ -17,7 +21,7 @@ export const projects = [
         title: "Project 3",
         description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dicta velit consectetur ex veritatis. Obcaecati quibusdam explicabo ullam et labore quo.",
         stack: [{ name: "next.js" }, { name: "tailwind css" }, { name: "javascript" }, { name: "node.js" }],
-        thumb: "/src/assets/projects/bistro.png",
+        thumb: project2,
         live: "",
         github: "",
     },
@@ -27,7 +31,7 @@ export const projects = [
         title: "Project 3",
         description: "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dicta velit consectetur ex veritatis. Obcaecati quibusdam explicabo ullam et labore quo.",
         stack: [{ name: "Html 5" }, { name: "tailwind css" }, { name: "javascript" }],
-        thumb: "/src/assets/projects/parlur.png",
+        thumb: project3,
         live: "",
         github: "",
     },
