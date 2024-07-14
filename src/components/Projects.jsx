@@ -1,17 +1,17 @@
 
-import project1 from '../assets/projects/helps-electronics.png'
+import project1 from '../assets/projects/helpsElectronics.png'
 import project2 from '../assets/projects/bistro.png'
 import project3 from '../assets/projects/hotelVilla.png'
 import project4 from '../assets/projects/parlur.png'
-import project5 from '../assets/projects/sazed-movie.png'
-import project6 from '../assets/projects/sir-eco.png'
-import project7 from '../assets/projects/the-dragon.png'
+import project5 from '../assets/projects/sazedMovie.png'
+import project6 from '../assets/projects/sirEco.png'
+import project7 from '../assets/projects/theDragon.png'
 import project8 from '../assets/projects/helpestbd.png'
-import project9 from '../assets/projects/doctors-portal.png'
-import project10 from '../assets/projects/car-doctor.png'
-import project11 from '../assets/projects/coffe-store-management.png'
-import project12 from '../assets/projects/the-news-dragon.png'
-import project13 from '../assets/projects/ema-john-with-firebase.png'
+import project9 from '../assets/projects/doctorsPortal.png'
+import project10 from '../assets/projects/carDoctor.png'
+import project11 from '../assets/projects/coffeStoreManagement.png'
+import project12 from '../assets/projects/theNewSdragon.png'
+import project13 from '../assets/projects/emaJohn.png'
 
 
 export const projects = [
