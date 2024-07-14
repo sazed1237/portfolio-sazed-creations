@@ -1,7 +1,7 @@
 
 import project1 from '../assets/projects/helps-electronics.png'
 import project2 from '../assets/projects/bistro.png'
-import project3 from '../assets/projects/hotel-villa.png'
+import project3 from '../assets/projects/hotelVilla.png'
 import project4 from '../assets/projects/parlur.png'
 import project5 from '../assets/projects/sazed-movie.png'
 import project6 from '../assets/projects/sir-eco.png'
