@@ -30,9 +30,9 @@ const Photo = () => {
                     className='w-[298px] h-[298px] lg:w-[498px] lg:h-[498px] mix-blend-lighten  rounded-full absolute'>
                     <img
                         src={sazedImage}
-                        priority
+                        priority="true"
                         quality={100}
-                        fill
+                        fill="true"
                         className="object-contain"
                     />
                 </motion.div>
