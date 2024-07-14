@@ -35,9 +35,9 @@ const Work = () => {
                 <div className='flex flex-col-reverse lg:flex-row lg:gap-[30px]'>
 
                     {/* details */}
-                    <div className='w-full lg:w-[50%] lg:h-[460px] flex lg:justify-between'>
+                    <div className='w-full lg:w-[50%]  flex lg:justify-between '>
 
-                        <div className='flex flex-col gap-[30px] h-[50%]'>
+                        <div className='w-[95%] flex flex-col gap-[30px]  '>
 
                             {/* outline num */}
                             <div className='text-8xl leading-none font-extrabold text-transparent text-outline'>
@@ -46,14 +46,15 @@ const Work = () => {
 
                             {/* project category */}
                             <h2 className='text-[42px] font-bold leading-none text-white group-hover:text-accent transition-all duration-500 capitalize'>{project.category} project</h2>
-                            <p className='text-white/60  '>{project.description}</p>
+                            <h3 className='text-accent text-xl'>{project.title}</h3>
+                            <p className='text-white/60'>{project.description}</p>
 
                             {/* stack */}
-                            <ul className='grid grid-cols-1 md:flex gap-4'>
+                            <ul className='grid grid-cols-1 md:grid-cols-4  gap-2'>
                                 {
                                     project.stack.map((item, index) => {
                                         return (
-                                            <li key={index} className='text-lg text-accent'>
+                                            <li key={index} className='text-sm text-accent'>
                                                 {item.name}
                                                 {/* remove the last comma */}
                                                 {index !== project.stack.length - 1 && ","}
@@ -69,7 +70,7 @@ const Work = () => {
                             {/* button */}
                             <div className='flex items-center gap-4'>
                                 {/* live project button */}
-                                <Link to={project.live}>
+                                <Link target='_blank' to={project.live}>
                                     <TooltipProvider delayDuration={100}>
                                         <Tooltip>
                                             <TooltipTrigger className='w-[60px] h-[60px] rounded-full bg-white/5 flex justify-center items-center group'>
@@ -84,7 +85,7 @@ const Work = () => {
                                 </Link>
 
                                 {/* Github project button */}
-                                <Link to={project.github}>
+                                <Link target='_blank' to={project.github}>
                                     <TooltipProvider delayDuration={100}>
                                         <Tooltip>
                                             <TooltipTrigger className='w-[60px] h-[60px] rounded-full bg-white/5 flex justify-center items-center group'>
