@@ -46,10 +46,10 @@ const Work = () => {
 
                             {/* project category */}
                             <h2 className='text-[42px] font-bold leading-none text-white group-hover:text-accent transition-all duration-500 capitalize'>{project.category} project</h2>
-                            <p className='text-white/60 '>{project.description}</p>
+                            <p className='text-white/60  '>{project.description}</p>
 
                             {/* stack */}
-                            <ul className='flex gap-4'>
+                            <ul className='grid grid-cols-1 md:flex gap-4'>
                                 {
                                     project.stack.map((item, index) => {
                                         return (
@@ -123,7 +123,7 @@ const Work = () => {
                                                 {/* thumbnail */}
                                                 <div className='relative w-full h-full'>
                                                     <img
-                                                        src={project.thumb}
+                                                        src={project?.thumb}
                                                         className='object-cover'
                                                         alt=""
                                                     />

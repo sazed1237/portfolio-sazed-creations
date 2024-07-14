@@ -11,17 +11,17 @@ const info = [
     {
         icon: <FaPhoneAlt />,
         title: "Phone",
-        description: "+880 1786 459 126"
+        description: "+880 1786 459 126",
     },
     {
         icon: <FaEnvelope />,
         title: "Email",
-        description: "sazedulislam9126@gmail.com"
+        description: "sazedulislam9126@gmail.com",
     },
     {
         icon: <FaMapMarkerAlt />,
         title: "Address",
-        description: "Mirpur-1, Dhaka, Bangladesh"
+        description: "Mirpur-1, Dhaka, Bangladesh",
     },
 ]
 
@@ -89,13 +89,13 @@ const Contact = () => {
                         <ul className='flex flex-col gap-10'>
                             {info.map((item, index) => {
                                 return (
-                                    <li key={index} className='flex items-center gap-6'>
+                                    <li key={index} className='flex items-center gap-4'>
                                         <div className='w-[52px] h-[50px] lg:w-[52px] lg:h-[50px] bg-[#27272c] text-accent rounded-md flex items-center justify-center'>
                                             <div className='text-[28px]'>{item.icon}</div>
                                         </div>
-                                        <div className='flex-1'>
+                                        <div className='flex-1 '>
                                             <p className='text-white/60'>{item.title}</p>
-                                            <h3 className='text-xl'>{item.description}</h3>
+                                            <h3 className='text-sm md:text-xl'>{item.description}</h3>
                                         </div>
                                     </li>
                                 )
