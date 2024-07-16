@@ -20,12 +20,12 @@ const Home = () => {
                         <h1 className='h1 mb-6'>
                             Hello, I'm <br /> <span className='text-accent'>Sazedul Islam</span>
                         </h1>
-                        <p className='max-w-[500px] leading-snug mb-9 text-white/80'>I'm a MERN stack and frontend developer with 1 years of experience in building web applications. I have a strong foundation in JavaScript, and I specialize in utilizing the MERN (MongoDB, Express.js, React.js, Node.js) stack to develop robust and scalable web solutions.</p>
+                        <p className='max-w-[500px] leading-snug mb-9 text-white/80'>I'm a Full Stack developer with 2 years of experience in building web applications. I have a strong foundation in JavaScript, and I specialize in utilizing the MERN (MongoDB, Express.js, React.js, Node.js) stack to develop robust and scalable web solutions.</p>
 
 
                         {/* button */}
                         <div className='flex flex-col lg:flex-row items-center gap-8'>
-                            <a href="/public/Sazedul Islam Resume.pdf" download >
+                            <a href="/Sazedul Islam Resume.pdf" download >
                                 <Button
                                     variant="outline"
                                     size="lg"
