@@ -24,7 +24,7 @@ export const projects = [
         title: "Helps Electronics",
         description: "Developed a full-stack e-commerce website using the MERN stack, Tailwind CSS, and Mongoose. Key features include user authentication, admin role management, product management, and an add-to-cart functionality. This project showcases comprehensive capabilities in both front-end and back-end development, ensuring a seamless shopping experience for users.",
         stack: [{ name: "react.js" }, { name: "tailwind css" }, { name: "javascript" }, { name: "node.js" }, { name: "express.js" }, { name: "mongoDB" }, { name: "mongoose" }, { name: "E-Commerce" },],
-        thumb: project14,
+        thumb: project1,
         live: "https://helps-electronics-frontend.vercel.app/",
         github: "https://github.com/sazed1237?tab=repositories&q=helps-electronics&type=&language=&sort=",
     },
