@@ -115,22 +115,22 @@ const Work = () => {
                             {
                                 projects.map((project, index) => {
                                     return (
-                                        <SwiperSlide key={index} className='w-full h-full'>
-                                            <div className='h-[460px] lg:h-[520px] relative group flex items-center justify-center bg-pink-50/80'>
+                                            <SwiperSlide key={index} className='w-full h-full'>
+                                                <Link target='_blank' to={project?.live} className='h-[460px] lg:h-[520px] relative group flex items-center justify-center bg-pink-50/80 cursor-pointer'>
 
-                                                {/* overlay */}
-                                                <div className='absolute top-0 bottom-0 w-full h-full bg-black/20 z-10'></div>
+                                                    {/* overlay */}
+                                                    <div className='absolute top-0 bottom-0 w-full h-full bg-black/20 z-10'></div>
 
-                                                {/* thumbnail */}
-                                                <div className='relative w-full h-full'>
-                                                    <img
-                                                        src={project?.thumb}
-                                                        className='object-cover'
-                                                        alt=""
-                                                    />
-                                                </div>
-                                            </div>
-                                        </SwiperSlide>
+                                                    {/* thumbnail */}
+                                                    <div className='relative w-full h-full'>
+                                                        <img
+                                                            src={project?.thumb}
+                                                            className='object-cover'
+                                                            alt=""
+                                                        />
+                                                    </div>
+                                                </Link>
+                                            </SwiperSlide>
                                     )
                                 })
                             }
