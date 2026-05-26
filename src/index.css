@@ -7,7 +7,50 @@
 
 @layer base {
   body {
-    @apply font-primary bg-primary text-white leading-loose;
+    @apply font-primary leading-loose;
+    background-color: #08111d;
+    color: #e8eef8;
+    background-image:
+      radial-gradient(circle at top left, rgba(102, 224, 196, 0.16), transparent 28%),
+      radial-gradient(circle at top right, rgba(96, 165, 250, 0.13), transparent 26%),
+      linear-gradient(180deg, #0a1320 0%, #08111d 45%, #050b14 100%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(102, 224, 196, 0.24);
+    color: #f7fbff;
+  }
+
+  @keyframes neon-glow {
+    0% { box-shadow: 0 6px 24px rgba(102,224,196,0.10); }
+    50% { box-shadow: 0 10px 40px rgba(102,224,196,0.18); }
+    100% { box-shadow: 0 6px 24px rgba(102,224,196,0.10); }
+  }
+
+  .neon-pulse {
+    animation: neon-glow 2.8s infinite ease-in-out;
+  }
+
+  @keyframes floaty {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .floaty {
+    animation: floaty 6s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shimmer-line {
+    background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
   }
 
   .h1 {
@@ -24,10 +67,10 @@
 
 
   .text-outline {
-    -webkit-text-stroke: 1px #ffffff;
+    -webkit-text-stroke: 1px #e8eef8;
   }
 
   .text-outline-hover {
-    -webkit-text-stroke: 1px #00ff99;
+    -webkit-text-stroke: 1px #66e0c4;
   }
 }

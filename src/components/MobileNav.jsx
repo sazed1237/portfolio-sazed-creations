@@ -16,12 +16,13 @@ const MobileNav = () => {
                 <CiMenuFries className='text-2xl text-accent' />
             </SheetTrigger>
 
-            <SheetContent className="flex flex-col">
+            <SheetContent className="flex flex-col bg-[#09111d] text-[#e8eef8] border-white/8">
                 {/* logo */}
                 <div className='mb-16 mt-20 text-center'>
                     <Link href={'/'}>
-                        <h1 className='text-xl font-semibold'>
-                            Sazed <span className='text-sm text-accent '>Creations</span>
+                        <h1 className='text-xl font-semibold tracking-wide'>
+                            SazeD
+                            {/* Sazed <span className='text-sm text-accent '>Creations</span> */}
                         </h1>
                     </Link>
                 </div>
@@ -32,7 +33,7 @@ const MobileNav = () => {
                     {
                         navItems.map((nav, index) => {
                             return (
-                                <Link href={nav.path} key={index} className={`${nav.path === pathname && "text-accent border-b-2 border-accent "} capitalize font-medium hover:text-accent transition-all`} >
+                                <Link href={nav.path} key={index} className={`${nav.path === pathname && "text-accent border-b-2 border-accent "} capitalize font-medium text-[#d3ddeb] hover:text-accent transition-all`} >
                                     {nav.name}
                                 </Link>
                             )

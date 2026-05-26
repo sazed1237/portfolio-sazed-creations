@@ -36,7 +36,7 @@ const Nav = () => {
             {
                 navItems.map((nav, index) => {
                     return (
-                        <Link href={nav.path} key={index} className={`${nav.path === pathname && "text-accent border-b-2 border-accent "} capitalize font-medium hover:text-accent transition-all`} >
+                        <Link href={nav.path} key={index} className={`${nav.path === pathname && "text-accent border-b-2 border-accent "} capitalize font-medium text-[#d3ddeb] hover:text-accent transition-all`} >
                             {nav.name}
                         </Link>
                     )

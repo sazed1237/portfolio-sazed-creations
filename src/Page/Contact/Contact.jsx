@@ -1,17 +1,31 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Input } from '../../components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Textarea } from '../../components/ui/textarea';
 import { Button } from '../../components/ui/button';
-import { services } from '../../helpers/servicesData';
+import Social from '../../components/Social';
+import { services as fallbackServices } from '../../helpers/servicesData';
 
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-const CONTACT_TO_EMAIL = 'sazedulislam9126@gmail.com';
+
+const sectionVariants = {
+    hidden: { opacity: 0, y: 24 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: 'easeOut' },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 14 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+};
 
 
 const info = [
@@ -28,12 +42,12 @@ const info = [
     {
         icon: <FaMapMarkerAlt />,
         title: "Address",
-        description: "Mirpur-1, Dhaka, Bangladesh",
+        description: "Aftabnagar, Dhaka, Bangladesh",
     },
 ]
 
 const Contact = () => {
-    const serviceOptions = services ?? [];
+    const [serviceOptions, setServiceOptions] = useState(fallbackServices ?? []);
 
     const [form, setForm] = useState({
         firstName: '',
@@ -44,6 +58,31 @@ const Contact = () => {
         message: '',
     });
     const [status, setStatus] = useState({ state: 'idle', message: '' });
+
+    useEffect(() => {
+        let active = true;
+
+        async function loadServiceOptions() {
+            try {
+                const response = await fetch('/api/services', { cache: 'no-store' });
+                const payload = await response.json();
+
+                if (response.ok && Array.isArray(payload?.items) && payload.items.length > 0) {
+                    if (active) {
+                        setServiceOptions(payload.items);
+                    }
+                }
+            } catch (error) {
+                console.warn('Failed to load live service options, using fallback list:', error);
+            }
+        }
+
+        loadServiceOptions();
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     const onChange = (key) => (e) => {
         setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -67,48 +106,56 @@ const Contact = () => {
             return;
         }
 
-        // If no access key is set, fall back to mailto so the form still “works”.
-        if (!WEB3FORMS_ACCESS_KEY) {
-            const subject = encodeURIComponent(`Portfolio contact: ${form.firstName} ${form.lastName}`.trim());
-            const body = encodeURIComponent(
-                [
-                    `Service: ${form.service || 'N/A'}`,
-                    `Phone: ${form.phone || 'N/A'}`,
-                    '',
-                    form.message,
-                    '',
-                    `Reply-to: ${form.email}`,
-                ].join('\n')
-            );
-            window.location.href = `mailto:${CONTACT_TO_EMAIL}?subject=${subject}&body=${body}`;
-            return;
-        }
 
         try {
             setStatus({ state: 'loading', message: 'Sending...' });
 
-            const payload = {
-                access_key: WEB3FORMS_ACCESS_KEY,
-                subject: `New portfolio message from ${form.firstName} ${form.lastName}`.trim(),
-                from_name: `${form.firstName} ${form.lastName}`.trim(),
-                email: form.email,
-                phone: form.phone,
-                service: form.service,
-                message: form.message,
-            };
+                // Save to our database API
+                const dbResponse = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firstName: form.firstName,
+                        lastName: form.lastName,
+                        email: form.email,
+                        phone: form.phone,
+                        service: form.service,
+                        message: form.message,
+                    }),
+                });
 
-            const res = await fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
 
-            const data = await res.json();
-            if (!res.ok || !data?.success) {
-                throw new Error(data?.message || 'Failed to send message.');
+                const dbData = await dbResponse.json();
+
+                if (!dbResponse.ok) {
+                    throw new Error(dbData?.error || 'Failed to save message');
             }
 
-            setStatus({ state: 'success', message: 'Message sent successfully.' });
+                // Also send via Web3Forms if configured (for redundancy)
+                if (WEB3FORMS_ACCESS_KEY) {
+                    try {
+                        const payload = {
+                            access_key: WEB3FORMS_ACCESS_KEY,
+                            subject: `New portfolio message from ${form.firstName} ${form.lastName}`.trim(),
+                            from_name: `${form.firstName} ${form.lastName}`.trim(),
+                            email: form.email,
+                            phone: form.phone,
+                            service: form.service,
+                            message: form.message,
+                        };
+
+                        await fetch('https://api.web3forms.com/submit', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload),
+                        });
+                    } catch (w3Error) {
+                        // Web3Forms is optional, don't fail if it errors
+                        console.warn('Web3Forms submission failed (non-critical):', w3Error);
+                    }
+                }
+
+                setStatus({ state: 'success', message: 'Message sent successfully!' });
             setForm({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
         } catch (err) {
             setStatus({ state: 'error', message: err?.message || 'Something went wrong.' });
@@ -117,31 +164,38 @@ const Contact = () => {
 
     return (
         <motion.section
-            initial={{ opacity: 0 }}
-            animate={{
-                opacity: 1,
-                transition: {
-                    delay: 2.4,
-                    duration: 0.4,
-                    ease: "easeIn"
-                }
-            }}
-            className='py-6'
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="relative overflow-hidden py-12 lg:py-14 bg-gradient-to-b from-[#06111c] via-[#071827] to-[#08121a]"
         >
-            <div className="container mx-auto">
-                <div className='flex flex-col-reverse lg:flex-row gap-[30px]'>
+            <div className="pointer-events-none absolute -top-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
+
+            <div className="container mx-auto px-4 relative z-10">
+                <div className="mx-auto mb-8 max-w-2xl text-center">
+                    <p className="text-sm uppercase tracking-[0.28em] text-accent/90">Get In Touch</p>
+                    <h2 className="mt-3 text-3xl font-bold md:text-4xl">Let&apos;s build something useful</h2>
+                    <p className="mt-3 text-white/65 leading-relaxed text-sm md:text-base">
+                        If you have an idea, a product, or a backend challenge, send a message and I&apos;ll get back with a clear next step.
+                    </p>
+                </div>
+
+                <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] items-start">
                     {/* form */}
-                    <div className='lg:w-[54%]'>
-                        <form onSubmit={onSubmit} className='flex flex-col gap-6 p-10 bg-[#27272c] rounded-xl'>
-                            <h3 className='text-3xl text-accent'>Let&apos;s Create Something Amazing</h3>
-                            <p className='text-white/60'>Ready to bring your ideas to life? Get in touch!</p>
+                    <motion.div variants={itemVariants}>
+                        <form onSubmit={onSubmit} className="flex flex-col gap-5 rounded-3xl border border-white/10 bg-[#0c1826]/80 p-5 md:p-6 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+                            <div>
+                                <h3 className="text-xl font-semibold text-white md:text-2xl">Start a conversation</h3>
+                                <p className="mt-2 text-sm text-white/60">Share the scope, timeline, or the problem you want to solve.</p>
+                            </div>
 
                             {/* input */}
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                                 <Input
                                     name="firstName"
                                     type="text"
-                                    placeholder="Firstname"
+                                    placeholder="First name"
                                     value={form.firstName}
                                     onChange={onChange('firstName')}
                                     required
@@ -149,14 +203,14 @@ const Contact = () => {
                                 <Input
                                     name="lastName"
                                     type="text"
-                                    placeholder="Lastname"
+                                    placeholder="Last name"
                                     value={form.lastName}
                                     onChange={onChange('lastName')}
                                 />
                                 <Input
                                     name="email"
                                     type="email"
-                                    placeholder="Email"
+                                    placeholder="Email address"
                                     value={form.email}
                                     onChange={onChange('email')}
                                     required
@@ -164,7 +218,7 @@ const Contact = () => {
                                 <Input
                                     name="phone"
                                     type="tel"
-                                    placeholder="Phone"
+                                    placeholder="Phone number"
                                     value={form.phone}
                                     onChange={onChange('phone')}
                                 />
@@ -177,9 +231,9 @@ const Contact = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>Select a service</SelectLabel>
+                                        <SelectLabel>What do you need?</SelectLabel>
                                         {serviceOptions.map((service) => (
-                                            <SelectItem key={service.num} value={service.title}>
+                                            <SelectItem key={service.id ?? service.num ?? service.title} value={service.title}>
                                                 {service.title}
                                             </SelectItem>
                                         ))}
@@ -189,8 +243,8 @@ const Contact = () => {
 
                             {/* textarea */}
                             <Textarea
-                                className="h-[200px]"
-                                placeholder="Type your message here..."
+                                className="h-[170px] rounded-xl border-white/10 bg-white/5 text-white placeholder:text-white/35"
+                                placeholder="Tell me a bit about your project, goals, timeline, and what you need help with..."
                                 value={form.message}
                                 onChange={onChange('message')}
                                 required
@@ -213,33 +267,56 @@ const Contact = () => {
                             {/* button */}
                             <Button
                                 size="md"
-                                className="max-w-40"
+                                className="max-w-44 bg-gradient-to-r from-accent to-[#43c6ad] text-[#06111c] hover:opacity-95"
                                 type="submit"
                                 disabled={status.state === 'loading'}
                             >
                                 {status.state === 'loading' ? 'Sending...' : 'Send message'}
                             </Button>
                         </form>
-                    </div>
+                    </motion.div>
 
                     {/* info */}
-                    <div className='flex-1 flex items-center lg:justify-end mb-8 lg:mb-0'>
-                        <ul className='flex flex-col gap-10'>
+                    <motion.div variants={itemVariants} className='flex-1 flex items-start lg:justify-end mb-8 lg:mb-0'>
+                        <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#0c1826]/75 p-5 md:p-6 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm">
+                            <div className="mb-5">
+                                <p className="text-sm uppercase tracking-[0.24em] text-accent/90">Contact Details</p>
+                                <h3 className="mt-2 text-xl font-semibold text-white">Prefer a direct line?</h3>
+                                <p className="mt-2 text-sm text-white/60">Reach out using any of the options below. I usually reply quickly.</p>
+                            </div>
+
+                            <ul className='flex flex-col gap-4'>
                             {info.map((item, index) => {
                                 return (
-                                    <li key={index} className='flex items-center gap-4'>
-                                        <div className='w-[52px] h-[50px] lg:w-[52px] lg:h-[50px] bg-[#27272c] text-accent rounded-md flex items-center justify-center'>
-                                            <div className='text-[28px]'>{item.icon}</div>
+                                    <li key={index} className='flex items-center gap-4 rounded-2xl border border-white/8 bg-white/5 p-3.5 transition-transform duration-300 hover:-translate-y-0.5 hover:border-accent/25'>
+                                        <div className='flex h-[48px] w-[48px] items-center justify-center rounded-2xl border border-accent/20 bg-accent/10 text-accent'>
+                                            <div className='text-[20px]'>{item.icon}</div>
                                         </div>
                                         <div className='flex-1 '>
-                                            <p className='text-white/60'>{item.title}</p>
-                                            <h3 className='text-sm md:text-xl'>{item.description}</h3>
+                                            <p className='text-sm uppercase tracking-[0.14em] text-white/45'>{item.title}</p>
+                                            <h3 className='text-sm md:text-base text-white/90 font-medium'>{item.description}</h3>
                                         </div>
                                     </li>
                                 )
                             })}
-                        </ul>
-                    </div>
+                            </ul>
+
+                            <div className="mt-6 border-t border-white/10 pt-5">
+                                <p className="text-sm uppercase tracking-[0.18em] text-accent/90 mb-4">Connect</p>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.2 }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <Social
+                                        containerStyles="flex flex-wrap gap-3"
+                                        iconStyles="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all duration-300 hover:-translate-y-1 hover:border-accent/35 hover:bg-accent hover:text-[#06111c]"
+                                    />
+                                </motion.div>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
             </div>
         </motion.section>

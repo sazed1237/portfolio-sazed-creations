@@ -8,12 +8,13 @@ import MobileNav from './MobileNav';
 
 const Header = () => {
     return (
-        <header className='py-5 xl:py-5 text-white sticky top-0 z-50 bg-[#121217] bg-opacity-90 backdrop-blur-sm'>
+        <header className='py-5 xl:py-5 text-[#e8eef8] sticky top-0 z-50 bg-[#08111d]/82 backdrop-blur-xl border-b border-white/5'>
             <div className='container mx-auto flex  items-center justify-between'>
                 {/* logo */}
                 <Link href={'/'}>
-                    <h1 className='text-2xl md:text-4xl font-semibold'>
-                        Sazed <span className='text-sm text-accent md:text-xl'>Creations</span>
+                    <h1 className='text-2xl md:text-4xl font-semibold tracking-wide'>
+                        SazeD
+                        {/* Sazed <span className='text-sm text-accent md:text-xl'>Creations</span> */}
                     </h1>
                 </Link>
 

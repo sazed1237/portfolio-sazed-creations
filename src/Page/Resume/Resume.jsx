@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import profileImageFile from "@/assets/Sazedul Islam.jpg";
 import {
   FaCss3,
   FaHtml5,
@@ -19,7 +20,9 @@ import {
   SiExpress,
   SiFirebase,
   SiGithub,
+  SiGo,
   SiMongodb,
+  SiMysql,
   SiNestjs,
   SiNextdotjs,
   SiPostgresql,
@@ -29,7 +32,6 @@ import {
   SiTypescript,
 } from "react-icons/si";
 
-const profileImage = "/Sazedul%20Islam.jpg";
 const resumePdf = "/Sazedul%20Islam%20Backend%20Engineer.pdf";
 
 const about = {
@@ -61,7 +63,7 @@ const experience = {
   items: [
     {
       company: "Softvence Delta - Betopia Group",
-      position: "Backend Developer",
+      position: "Jr. Backend Developer",
       duration: "03/2025 - Present",
     },
     {
@@ -76,7 +78,7 @@ const experience = {
     },
     {
       company: "Ideal Institute of Science & Technology (IIST)",
-      position: "Junior Instructor – Web Development",
+      position: "Jr. Instructor – Web Development",
       duration: "03/2023 - 02/2024",
     },
     {
@@ -125,8 +127,10 @@ export const skills = {
     { icon: <FaNodeJs />, name: "Node.js" },
     { icon: <SiNestjs />, name: "NestJS" },
     { icon: <SiExpress />, name: "Express.js" },
+    { icon: <SiGo />, name: "Go" },
     { icon: <SiPostgresql />, name: "PostgreSQL" },
     { icon: <SiMongodb />, name: "MongoDB" },
+    { icon: <SiMysql />, name: "MySQL" },
     { icon: <SiRedis />, name: "Redis" },
     { icon: <SiPrisma />, name: "Prisma" },
     { icon: <FaReact />, name: "React.js" },
@@ -143,8 +147,31 @@ export const skills = {
   ],
 };
 
+const sectionVariants = {
+  hidden: { opacity: 0, y: 22 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: "easeOut" },
+  },
+};
+
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.06 },
+  },
+};
+
+const listItemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+};
+
 const Resume = () => {
-  const [showAboutFullDescription, setShowAboutFullDescription] = useState(false);
+  const [showAboutFullDescription, setShowAboutFullDescription] =
+    useState(false);
   const aboutParagraphs = about.description
     .trim()
     .split(/\n\s*\n/g)
@@ -153,21 +180,34 @@ const Resume = () => {
 
   const quickFacts = about.info.slice(0, 5);
   const featuredSkills = skills.skillsList.slice(0, 10);
-  const visibleAboutParagraphs = showAboutFullDescription ? aboutParagraphs : aboutParagraphs.slice(0, 1);
+  const visibleAboutParagraphs = showAboutFullDescription
+    ? aboutParagraphs
+    : aboutParagraphs.slice(0, 1);
 
   return (
     <section className="py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0, transition: { delay: 0.15, duration: 0.5, ease: "easeOut" } }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          transition: { delay: 0.15, duration: 0.5, ease: "easeOut" },
+        }}
         className="container mx-auto"
       >
         <div className="grid gap-8 lg:grid-cols-[340px_minmax(0,1fr)] items-start">
           <aside className="lg:sticky lg:top-24 space-y-6">
-            <div className="rounded-2xl bg-[#1f1f24] border border-white/5 overflow-hidden shadow-xl">
-              <div className="relative h-[360px] w-full bg-[#17171c]">
+            <motion.div
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              whileHover={{ y: -4 }}
+              className="rounded-2xl bg-[#0c1826]/80 border border-white/10 overflow-hidden shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm"
+            >
+              <div className="relative h-[360px] w-full bg-[#08131e]">
                 <Image
-                  src={profileImage}
+                  src={profileImageFile}
                   alt="Sazedul Islam"
                   fill
                   className="object-cover object-top"
@@ -176,13 +216,18 @@ const Resume = () => {
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.3em] text-accent/90">Resume</p>
+                  <p className="text-sm uppercase tracking-[0.3em] text-accent/90">
+                    Resume
+                  </p>
                   <h1 className="text-3xl font-bold mt-2">Sazedul Islam</h1>
-                  <p className="text-white/65 mt-2">Backend Software Engineer</p>
+                  <p className="text-white/65 mt-2">
+                    Backend Software Engineer
+                  </p>
                 </div>
 
                 <p className="text-white/70 leading-relaxed">
-                  Backend-focused engineer building secure APIs, real-time systems, and scalable application architecture.
+                  Backend-focused engineer building secure APIs, real-time
+                  systems, and scalable application architecture.
                 </p>
 
                 <div className="flex flex-col gap-3">
@@ -201,42 +246,72 @@ const Resume = () => {
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="rounded-2xl bg-[#1f1f24] border border-white/5 p-6 shadow-xl space-y-5">
+            <motion.div
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              whileHover={{ y: -3 }}
+              className="rounded-2xl bg-[#0c1826]/80 border border-white/10 p-6 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm space-y-5"
+            >
               <h2 className="text-xl font-semibold">Quick Facts</h2>
               <ul className="space-y-3">
                 {quickFacts.map((item) => (
-                  <li key={item.fieldName} className="flex items-start justify-between gap-4 text-sm">
+                  <li
+                    key={item.fieldName}
+                    className="flex items-start justify-between gap-4 text-sm"
+                  >
                     <span className="text-white/55">{item.fieldName}</span>
-                    <span className="text-right text-white/90 font-medium">{item.fieldValue}</span>
+                    <span className="text-right text-white/90 font-medium">
+                      {item.fieldValue}
+                    </span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
 
-            <div className="rounded-2xl bg-[#1f1f24] border border-white/5 p-6 shadow-xl space-y-5">
+            <motion.div
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              whileHover={{ y: -3 }}
+              className="rounded-2xl bg-[#0c1826]/80 border border-white/10 p-6 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm space-y-5"
+            >
               <h2 className="text-xl font-semibold">Top Skills</h2>
               <div className="flex flex-wrap gap-2">
                 {featuredSkills.map((skill) => (
-                  <span key={skill.name} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white/80">
+                  <span
+                    key={skill.name}
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm text-white/80"
+                  >
                     {skill.name}
                   </span>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </aside>
 
           <div className="space-y-8">
-            <section className="rounded-3xl bg-[#1f1f24] border border-white/5 p-6 md:p-8 shadow-xl">
+            <motion.section
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              className="rounded-3xl bg-[#0c1826]/80 border border-white/10 p-6 md:p-8 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm"
+            >
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.28em] text-accent/90">Professional Profile</p>
+                  <p className="text-sm uppercase tracking-[0.28em] text-accent/90">
+                    Professional Profile
+                  </p>
                   <h2 className="mt-2 text-4xl font-bold">About Me</h2>
                 </div>
-                <p className="max-w-xl text-white/60">
+                {/* <p className="max-w-xl text-white/60">
                   A concise summary of experience, technical direction, and the value I bring to teams and products.
-                </p>
+                </p> */}
               </div>
 
               <div className="mt-8 grid gap-6 lg:grid-cols-2">
@@ -248,7 +323,9 @@ const Resume = () => {
                   {aboutParagraphs.length > 1 && (
                     <button
                       type="button"
-                      onClick={() => setShowAboutFullDescription((current) => !current)}
+                      onClick={() =>
+                        setShowAboutFullDescription((current) => !current)
+                      }
                       className="text-accent text-sm font-semibold hover:underline"
                     >
                       {showAboutFullDescription ? "Read less" : "Read more"}
@@ -256,7 +333,7 @@ const Resume = () => {
                   )}
                 </div>
 
-                <div className="rounded-2xl bg-[#17171c] border border-white/5 p-5">
+                <div className="rounded-2xl bg-white/5 border border-white/10 p-5">
                   <h3 className="text-lg font-semibold mb-4">Core Focus</h3>
                   <ul className="space-y-3 text-white/75">
                     <li>• Backend architecture and API development</li>
@@ -266,75 +343,151 @@ const Resume = () => {
                   </ul>
                 </div>
               </div>
-            </section>
+            </motion.section>
 
-            <section className="rounded-3xl bg-[#1f1f24] border border-white/5 p-6 md:p-8 shadow-xl">
+            <motion.section
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              className="rounded-3xl bg-[#0c1826]/80 border border-white/10 p-6 md:p-8 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm"
+            >
               <div className="flex items-end justify-between gap-4 mb-6">
                 <div>
-                  <p className="text-sm uppercase tracking-[0.28em] text-accent/90">Career</p>
+                  <p className="text-sm uppercase tracking-[0.28em] text-accent/90">
+                    Career
+                  </p>
                   <h2 className="mt-2 text-3xl font-bold">Experience</h2>
                 </div>
               </div>
 
-              <div className="space-y-5">
+              <motion.div
+                variants={listContainerVariants}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.15 }}
+                className="space-y-5"
+              >
                 {experience.items.map((item) => (
-                  <article
+                  <motion.article
                     key={`${item.position}-${item.duration}`}
-                    className="relative rounded-2xl border border-white/5 bg-[#17171c] p-5 md:p-6"
+                    variants={listItemVariants}
+                    whileHover={{
+                      y: -4,
+                      borderColor: "rgba(102,224,196,0.35)",
+                    }}
+                    className="relative rounded-2xl border border-white/10 bg-white/5 p-5 md:p-6"
                   >
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div>
-                        <p className="text-accent text-sm font-medium">{item.duration}</p>
-                        <h3 className="mt-1 text-xl font-semibold text-white">{item.position}</h3>
+                        <p className="text-accent text-sm font-medium">
+                          {item.duration}
+                        </p>
+                        <h3 className="mt-1 text-xl font-semibold text-white">
+                          {item.position}
+                        </h3>
                       </div>
                       <div className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
                         {item.company}
                       </div>
                     </div>
-                  </article>
+                  </motion.article>
                 ))}
-              </div>
-            </section>
+              </motion.div>
+            </motion.section>
 
-            <section className="rounded-3xl bg-[#1f1f24] border border-white/5 p-6 md:p-8 shadow-xl">
-              <p className="text-sm uppercase tracking-[0.28em] text-accent/90">Academic Path</p>
+            <motion.section
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              className="rounded-3xl bg-[#0c1826]/80 border border-white/10 p-6 md:p-8 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm"
+            >
+              <p className="text-sm uppercase tracking-[0.28em] text-accent/90">
+                Academic Path
+              </p>
               <h2 className="mt-2 text-3xl font-bold">Education</h2>
 
-              <div className="mt-6 grid gap-5 md:grid-cols-2">
+              <motion.div
+                variants={listContainerVariants}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.15 }}
+                className="mt-6 grid gap-5 md:grid-cols-2"
+              >
                 {education.items.map((item) => (
-                  <article
+                  <motion.article
                     key={`${item.degree}-${item.duration}`}
-                    className="rounded-2xl border border-white/5 bg-[#17171c] p-5"
+                    variants={listItemVariants}
+                    whileHover={{
+                      y: -4,
+                      borderColor: "rgba(102,224,196,0.35)",
+                    }}
+                    className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[0_10px_30px_rgba(2,6,23,0.24)]"
                   >
-                    <p className="text-accent text-sm font-medium">{item.duration}</p>
-                    <h3 className="mt-2 text-xl font-semibold text-white">{item.degree}</h3>
-                    <p className="mt-3 text-white/65">{item.institution}</p>
-                  </article>
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <p className="text-accent text-sm font-medium">
+                        {item.duration}
+                      </p>
+                      <span className="rounded-full border border-accent/20 bg-accent/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+                        Education
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-white">
+                      {item.degree}
+                    </h3>
+                    <p className="mt-3 text-white/70 leading-relaxed">
+                      {item.institution}
+                    </p>
+                  </motion.article>
                 ))}
-              </div>
-            </section>
+              </motion.div>
+            </motion.section>
 
-            <section className="rounded-3xl bg-[#1f1f24] border border-white/5 p-6 md:p-8 shadow-xl">
-              <p className="text-sm uppercase tracking-[0.28em] text-accent/90">Technical Toolkit</p>
+            <motion.section
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.15 }}
+              className="rounded-3xl bg-[#0c1826]/80 border border-white/10 p-6 md:p-8 shadow-[0_16px_45px_rgba(2,6,23,0.45)] backdrop-blur-sm"
+            >
+              <p className="text-sm uppercase tracking-[0.28em] text-accent/90">
+                Technical Toolkit
+              </p>
               <h2 className="mt-2 text-3xl font-bold">Skills</h2>
               <p className="mt-3 max-w-2xl text-white/60">
-                A practical set of technologies used across backend, full-stack integration, deployment, and product delivery.
+                A practical set of technologies used across backend, full-stack
+                integration, deployment, and product delivery.
               </p>
 
-              <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              <motion.div
+                variants={listContainerVariants}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.15 }}
+                className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
+              >
                 {skills.skillsList.map((skill) => (
-                  <div
+                  <motion.div
                     key={skill.name}
-                    className="rounded-2xl border border-white/5 bg-[#17171c] p-4 text-center transition-transform hover:-translate-y-0.5"
+                    variants={listItemVariants}
+                    whileHover={{
+                      y: -4,
+                      scale: 1.02,
+                      borderColor: "rgba(102,224,196,0.35)",
+                    }}
+                    className="rounded-2xl border border-white/10 bg-[#08131e]/85 p-4 text-center transition-transform hover:-translate-y-0.5"
                   >
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 text-2xl text-accent">
                       {skill.icon}
                     </div>
-                    <p className="mt-3 text-sm font-medium text-white/80">{skill.name}</p>
-                  </div>
+                    <p className="mt-3 text-sm font-medium text-white/80">
+                      {skill.name}
+                    </p>
+                  </motion.div>
                 ))}
-              </div>
-            </section>
+              </motion.div>
+            </motion.section>
           </div>
         </div>
       </motion.div>

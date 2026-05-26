@@ -8,11 +8,10 @@
     "dev": "next dev",
     "start": "next start",
     "start:dev": "next dev",
+    "build": "next build && npx opennextjs-cloudflare build --skipNextBuild",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+    "seed:d1": "node ./scripts/seed-d1.mjs",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare upload && wrangler versions deploy"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.1",
@@ -25,6 +24,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.13",
+    "jodit": "^4.12.2",
+    "jodit-react": "^5.3.21",
     "localforage": "^1.10.0",
     "lucide-react": "^0.400.0",
     "match-sorter": "^6.3.4",
@@ -46,6 +47,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
+    "dotenv": "^16.3.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.3.1",
     "eslint-plugin-react": "^7.34.2",

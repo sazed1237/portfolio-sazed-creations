@@ -1,41 +1,21 @@
-import Home from "../Home";
+import Home, { HomeBlog } from "../Home";
 import Services from "../../Services/Services";
 import Resume from "../../Resume/Resume";
 import Work from "../../Work/Work";
 import Contact from "../../Contact/Contact";
 
-const MainHome = () => {
+const MainHome = ({ initialProjects = [], initialPosts = [] }) => {
   return (
     <div>
-      <Home></Home>
-      <div className="bg-[#242429] py-9">
-        <h2 className="text-4xl font-bold text-center my-5 ">
-          My <span className="text-accent">Services</span>
-        </h2>
-        <p className="text-white/70 mt-3 text-center max-w-[900px] mx-auto px-4">
-          I deliver professional backend and full-stack solutions focused on
-          reliability, security, and performance. Below are the core services I
-          offer — each can be scoped to fit short-term projects or long-term
-          partnerships.
-        </p>
-
-        <Services></Services>
-      </div>
+      <Home />
+      <Services></Services>
       <Resume></Resume>
 
-      <div className="bg-[#242429] py-6">
-        <h2 className="text-4xl font-bold text-center my-5 ">
-          My <span className="text-accent">Projects</span>
-        </h2>
-        <p className="max-w-[850px] mx-auto text-center text-white/60 px-4">
-          Here are some of the key projects I’ve worked on, showcasing my
-          backend and full-stack development expertise, API design, real-time
-          systems, and database management.
-        </p>
-        <Work></Work>
-      </div>
+      <Work initialProjects={initialProjects}></Work>
 
-      <div className="py-12">
+      <HomeBlog initialPosts={initialPosts} />
+
+      <div className="pb-12">
         <Contact></Contact>
       </div>
     </div>

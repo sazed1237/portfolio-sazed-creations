@@ -2,75 +2,36 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import sazedImage from '../assets/sazedul.png'
+import sazedul_image from '../assets/Sazedul Islam.png';
 
 const Photo = () => {
     return (
-        <div className='w-full h-full relative'>
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{
-                    opacity: 1,
-                    transition: {
-                        delay: 2,
-                        duration: 0.4,
-                        ease: "easeIn"
-                    }
-                }}
-            >
-                {/* Image div */}
-                    <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{
-                        opacity: 1,
-                        transition: {
-                            delay: 2.4,
-                            duration: 0.4,
-                            ease: "easeInOut"
-                        }
-                    }}
-                    className='w-[298px] h-[298px] lg:w-[498px] lg:h-[498px] mix-blend-lighten rounded-full absolute overflow-hidden'>
-                    <div className="relative w-full h-full">
-                        <Image
-                            src={sazedImage}
-                            priority
-                            fill
-                            alt="Sazedul Islam — Backend Developer"
-                            className="object-contain"
-                        />
-                    </div>
-                </motion.div>
-
-                {/* circle */}
-                <motion.svg
-                    className="w-[300px] lg:w-[506px] h-[300px] lg:h-[506px]"
-                    fill='transparent'
-                    viewBox={"0 0 506 506"}
-                    xmlns="http://www.w3.org/2000/svg"
+        <div className='w-full h-full relative flex justify-center items-center'>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } }}
+                    whileHover={{ rotate: 0, y: -10, scale: 1.03 }}
+                    transition={{ type: 'spring', stiffness: 140, damping: 18 }}
+                    className='cursor-pointer select-none floaty'
                 >
+                {/* Polaroid paper wrapper */}
+                <div className='relative transform rotate-3 hover:rotate-0 transition-transform duration-500'>
+                    <div className='bg-white/3 rounded-[10px] p-3 shadow-[0_30px_60px_rgba(2,8,20,0.35)]'>
+                        <div className='bg-white rounded-[6px] p-2'>
+                            <div className='w-[160px] h-[160px] sm:w-[220px] sm:h-[220px] lg:w-[350px] lg:h-[350px] overflow-hidden rounded-sm bg-[#07101b]'>
+                                <Image src={sazedul_image} priority fill alt='Sazedul Islam — Backend Developer' className='object-cover' />
+                                <div className='pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/20 mix-blend-overlay' />
+                            </div>
+                        </div>
+                        {/* white polaroid foot */}
+                        <div className='mt-2 bg-white rounded-b-[6px] pt-1 pb-3 px-3 text-center'>
+                            <div className='text-sm text-[#08111d] font-semibold'>Sazedul Islam</div>
+                        </div>
+                    </div>
 
-                    <motion.circle
-                        cx="253" cy="253"
-                        r="250"
-                        stroke="#00ff99"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        initial={{ strokeDasharray: "24 10 0 0" }}
-                        animate={{
-                            strokeDasharray: ["15 120 25 25", "16 25 92 72", "4 250 22 22"],
-                            rotate: [120, 360]
-                        }}
-                        transition={{
-                            duration: 20,
-                            repeat: Infinity,
-                            repeatType: "reverse"
-
-                        }}
-                    />
-
-                </motion.svg>
-
+                    {/* accent corner */}
+                    <div className='absolute -top-4 -right-4 w-10 h-10 rounded-sm border-2 border-accent/90 bg-accent/10 shadow-[0_6px_30px_rgba(66,200,170,0.12)]' />
+                </div>
             </motion.div>
         </div>
     );

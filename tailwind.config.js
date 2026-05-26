@@ -11,7 +11,19 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "15px",
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1rem',
+        md: '1.25rem',
+        lg: '2rem',
+        xl: '3rem',
+      },
+      screens: {
+        sm: '640px',
+        md: '768px',
+        lg: '1100px',
+        xl: '1300px',
+      },
     },
     screens: {
       sm: "640px",
@@ -26,10 +38,12 @@ module.exports = {
     extend: {
       
       colors: {
-        primary: "#1c1c22",
+        primary: "#08111d",
+        surface: "#101a2b",
+        muted: "#9aa9bd",
         accent: {
-          DEFAULT: "#00ff99",
-          hover: "#00e187",
+          DEFAULT: "#66e0c4",
+          hover: "#43c6ad",
         },
       },
 

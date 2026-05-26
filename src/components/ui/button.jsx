@@ -7,13 +7,13 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold ring-offset-white transition-colors focus-visible:outline-none ",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold ring-offset-white transition-all duration-300 focus-visible:outline-none ",
   {
     variants: {
       variant: {
-        default: "bg-accent text-primary hover:bg-accent-hover",
-        primary: "bg-primary text-white",
-        outline: "border border-accent bg-transparent text-accent hover:bg-accent hover:text-primary",
+        default: "bg-accent text-[#06111c] shadow-lg shadow-accent/15 hover:bg-accent-hover hover:shadow-accent/25",
+        primary: "bg-[#0d1727] text-[#e8eef8] border border-white/8 hover:bg-[#121f31]",
+        outline: "border border-accent bg-transparent text-accent hover:bg-accent hover:text-[#06111c]",
       },
 
       size: {
