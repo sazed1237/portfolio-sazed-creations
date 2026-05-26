@@ -7,7 +7,7 @@ import Contact from "../../Contact/Contact";
 const MainHome = ({ initialProjects = [], initialPosts = [] }) => {
   return (
     <div>
-      <Home initialPosts={initialPosts} />
+      <Home />
       <Services></Services>
       <Resume></Resume>
 

@@ -41,7 +41,7 @@ function slugify(value) {
     .replace(/(^-|-$)/g, '');
 }
 
-const Home = ({ initialPosts = [] }) => {
+const Home = () => {
   return (
     <section className="h-full">
       <div className="container mx-auto h-full">
@@ -125,7 +125,7 @@ export function HomeBlog({ initialPosts = [] }) {
   const latestPosts = Array.isArray(initialPosts) ? initialPosts.slice(0, 3) : [];
 
   return (
-    <section className="mt-14 lg:mt-20">
+    <section className="my-14 lg:mt-20">
       <div className="container mx-auto px-4">
         <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">

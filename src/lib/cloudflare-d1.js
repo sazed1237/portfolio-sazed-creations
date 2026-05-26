@@ -684,122 +684,115 @@ function normalizeProjectPayload(payload = {}) {
   };
 }
 
+async function ensureProjectsTable() {
+  await queryD1(
+    `
+      CREATE TABLE IF NOT EXISTS projects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        category TEXT,
+        responsibilities TEXT,
+        techStack TEXT,
+        liveDemo TEXT,
+        github TEXT,
+        thumb TEXT,
+        featured INTEGER NOT NULL DEFAULT 0,
+        status TEXT NOT NULL DEFAULT 'draft',
+        sortOrder INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )
+    `
+  );
+}
+
 export async function createAdminProject(payload) {
-  // Provide a more accurate, actionable set of statistics sourced from D1.
   if (!hasD1Config()) {
-    return {
-      source: 'd1',
-      metricCards: [
-        { label: 'Total Projects', value: '0', delta: '0%', tone: 'emerald' },
-        { label: 'Published', value: '0', delta: '0%', tone: 'sky' },
-        { label: 'Leads (30d)', value: '0', delta: '0%', tone: 'violet' },
-        { label: 'Avg Response (hrs)', value: '0', delta: '0%', tone: 'amber' },
-      ],
-      traffic: [],
-      highlights: [],
-      goals: [],
-    };
+    return { source: 'd1', saved: false, reason: 'D1 not configured' };
   }
 
-  await ensureClientsTable();
+  await ensureProjectsTable();
+  const project = normalizeProjectPayload(payload);
 
-  const [
-    totalProjectsRows,
-    statusProjectRows,
-    totalMessagesRows,
-    messages30dRows,
-    repliedMessagesRows,
-    avgResponseRows,
-    clientCountsRows,
-  ] = await Promise.all([
-    safeQueryD1('SELECT COUNT(*) AS total FROM projects', [], [{ total: 0 }]),
-    safeQueryD1(
-      `SELECT
-         SUM(CASE WHEN LOWER(COALESCE(status, 'draft')) = 'published' THEN 1 ELSE 0 END) AS published,
-         SUM(CASE WHEN LOWER(COALESCE(status, 'draft')) = 'in-review' THEN 1 ELSE 0 END) AS inReview,
-         SUM(CASE WHEN LOWER(COALESCE(status, 'draft')) = 'draft' THEN 1 ELSE 0 END) AS drafts
-       FROM projects`,
-      [],
-      [{ published: 0, inReview: 0, drafts: 0 }]
-    ),
-    safeQueryD1('SELECT COUNT(*) AS total FROM messages', [], [{ total: 0 }]),
-    safeQueryD1(
-      `SELECT COUNT(*) AS last30 FROM messages WHERE created_at >= datetime('now', '-30 days')`,
-      [],
-      [{ last30: 0 }]
-    ),
-    safeQueryD1(
-      `SELECT
-         SUM(CASE WHEN LOWER(COALESCE(status, 'new')) = 'replied' THEN 1 ELSE 0 END) AS replied
-       FROM messages`,
-      [],
-      [{ replied: 0 }]
-    ),
-    safeQueryD1(
-      `SELECT
-         COUNT(*) AS total,
-         SUM(CASE WHEN LOWER(COALESCE(status, 'active')) = 'active' THEN 1 ELSE 0 END) AS active,
-         SUM(CASE WHEN LOWER(COALESCE(relationship, 'client')) = 'partner' THEN 1 ELSE 0 END) AS partners
-       FROM clients`,
-      [],
-      [{ total: 0, active: 0, partners: 0 }],
-      'clients'
-    ),
-  ]);
-
-  const totalProjects = Number(totalProjectsRows?.[0]?.total ?? 0);
-  const published = Number(statusProjectRows?.[0]?.published ?? 0);
-  const inReview = Number(statusProjectRows?.[0]?.inReview ?? 0);
-  const drafts = Number(statusProjectRows?.[0]?.drafts ?? 0);
-  const totalMessages = Number(totalMessagesRows?.[0]?.total ?? 0);
-  const messages30d = Number(messages30dRows?.[0]?.last30 ?? 0);
-  const repliedMessages = Number(repliedMessagesRows?.[0]?.replied ?? 0);
-  const clientsTotal = Number(clientCountsRows?.[0]?.total ?? 0);
-  const clientsActive = Number(clientCountsRows?.[0]?.active ?? 0);
-  const clientsPartners = Number(clientCountsRows?.[0]?.partners ?? 0);
-
-  // Average response time in hours for messages which reached 'replied' status
-  const avgResp = await safeQueryD1(
-    `SELECT ROUND(AVG((julianday(updated_at) - julianday(created_at)) * 24), 1) AS avg_hours FROM messages WHERE LOWER(COALESCE(status,'new')) = 'replied'`,
-    [],
-    [{ avg_hours: null }]
+  await queryD1(
+    `
+      INSERT INTO projects (
+        title,
+        description,
+        category,
+        responsibilities,
+        techStack,
+        liveDemo,
+        github,
+        thumb,
+        featured,
+        status,
+        sortOrder,
+        updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `,
+    [
+      project.title,
+      project.description,
+      project.category,
+      JSON.stringify(project.responsibilities ?? []),
+      JSON.stringify(project.techStack ?? []),
+      project.liveDemo,
+      project.github,
+      project.thumb,
+      project.featured ? 1 : 0,
+      project.status,
+      project.sortOrder,
+    ]
   );
 
-  const avgResponseHours = avgResp?.[0]?.avg_hours != null ? Number(avgResp[0].avg_hours) : null;
+  return { source: 'd1', saved: true };
+}
 
-  // Compose metric cards aimed at clarity for the admin
-  const metricCards = [
-    { label: 'Total Projects', value: String(totalProjects), delta: `${published}/${totalProjects}`, tone: 'emerald' },
-    { label: 'Published', value: String(published), delta: `${inReview} in-review`, tone: 'sky' },
-    { label: 'Leads (30d)', value: String(messages30d), delta: `${totalMessages} total`, tone: 'violet' },
-    { label: 'Avg Response (hrs)', value: avgResponseHours != null ? String(avgResponseHours) : '—', delta: `${repliedMessages} replied`, tone: 'amber' },
-  ];
+export async function updateAdminProject(id, payload) {
+  if (!hasD1Config()) {
+    return { source: 'd1', saved: false, reason: 'D1 not configured' };
+  }
 
-  const traffic = [
-    { channel: 'Direct', value: '38%', bar: 'w-[38%]' },
-    { channel: 'Search', value: '27%', bar: 'w-[27%]' },
-    { channel: 'Social', value: '19%', bar: 'w-[19%]' },
-    { channel: 'Referral', value: '16%', bar: 'w-[16%]' },
-  ];
+  await ensureProjectsTable();
+  const project = normalizeProjectPayload(payload);
 
-  const highlights = [
-    { title: 'Unread messages', detail: `${totalMessages - repliedMessages} items waiting for reply` },
-    { title: 'Projects in review', detail: `${inReview} projects require publishing decisions` },
-    { title: 'Clients needing follow-up', detail: `${Math.max(0, clientsTotal - clientsActive)} clients` },
-  ];
+  await queryD1(
+    `
+      UPDATE projects
+      SET
+        title = ?,
+        description = ?,
+        category = ?,
+        responsibilities = ?,
+        techStack = ?,
+        liveDemo = ?,
+        github = ?,
+        thumb = ?,
+        featured = ?,
+        status = ?,
+        sortOrder = ?,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `,
+    [
+      project.title,
+      project.description,
+      project.category,
+      JSON.stringify(project.responsibilities ?? []),
+      JSON.stringify(project.techStack ?? []),
+      project.liveDemo,
+      project.github,
+      project.thumb,
+      project.featured ? 1 : 0,
+      project.status,
+      project.sortOrder,
+      id,
+    ]
+  );
 
-  const goals = [
-    { label: 'Monthly Leads Goal', current: messages30d, target: 50, percent: Math.min(100, Math.round((messages30d / 50) * 100)), tone: 'emerald' },
-    { label: 'Reply SLA (hrs)', current: avgResponseHours != null ? Math.round(avgResponseHours) : 0, target: 24, percent: avgResponseHours != null ? Math.min(100, Math.round((avgResponseHours / 24) * 100)) : 0, tone: 'sky' },
-  ];
-
-  return {
-    source: 'd1',
-    metricCards,
-    traffic,
-    highlights,
-    goals,
-  };
+  return { source: 'd1', saved: true };
 }
 
 
@@ -808,6 +801,7 @@ export async function deleteAdminProject(id) {
     return { source: 'd1', saved: false, reason: 'D1 not configured' };
   }
 
+  await ensureProjectsTable();
   await queryD1('DELETE FROM projects WHERE id = ?', [id]);
   return { source: 'd1', saved: true };
 }

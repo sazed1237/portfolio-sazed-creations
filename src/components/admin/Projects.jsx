@@ -257,21 +257,6 @@ export default function Projects() {
     },
   ];
 
-  const steps = [
-    {
-      title: "Wireframe approved",
-      detail: "Client signed off on structure and sections.",
-    },
-    {
-      title: "Content refreshed",
-      detail: "Copy, visuals, and CTA hierarchy updated.",
-    },
-    {
-      title: "SEO ready",
-      detail: "Metadata and previews validated for launch.",
-    },
-  ];
-
   function handleFieldChange(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
   }

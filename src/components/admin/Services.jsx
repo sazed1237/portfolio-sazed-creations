@@ -137,7 +137,7 @@ export default function Services() {
       // auto-select the first visible service for a smoother UX
       setEditingId(filteredServices[0]?.id ?? null);
     }
-  }, [filteredServices]);
+  }, [filteredServices, editingId]);
   const selectedService = useMemo(
     () =>
       services.find((service) => String(service.id) === String(editingId)) ??
@@ -181,28 +181,6 @@ export default function Services() {
       label: "Avg. Conversion",
       value: loading ? "..." : `${data?.summary?.avgConversion ?? 0}%`,
       note: "From service page visits",
-    },
-  ];
-
-  const features = [
-    "Edit service descriptions and deliverables",
-    "Adjust price points and turnaround times",
-    "Toggle active, draft, and hidden states",
-    "Reorder featured packages for the homepage",
-  ];
-
-  const workflow = [
-    {
-      title: "Package polished",
-      detail: "Copy tightened and benefits rewritten for clarity.",
-    },
-    {
-      title: "Pricing approved",
-      detail: "Rates validated against current positioning.",
-    },
-    {
-      title: "CTA aligned",
-      detail: "Buttons and labels updated for conversion.",
     },
   ];
 
