@@ -901,6 +901,7 @@ export async function getAdminUsers() {
       items: [],
     };
   }
+  
 
   await ensureClientsTable();
 
