@@ -20,8 +20,9 @@ const MobileNav = () => {
                 {/* logo */}
                 <div className='mb-16 mt-20 text-center'>
                     <Link href={'/'}>
-                        <h1 className='text-xl font-semibold'>
-                            Sazed <span className='text-sm text-accent '>Creations</span>
+                        <h1 className='text-xl font-semibold tracking-wide'>
+                            SazeD
+                            {/* Sazed <span className='text-sm text-accent '>Creations</span> */}
                         </h1>
                     </Link>
                 </div>

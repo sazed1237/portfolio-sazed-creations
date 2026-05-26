@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
-import { projects } from './Projects';
+import { projects } from '../data/projectsData.js';
 import { skills } from '../Page/Resume/Resume';
 
 const CardTile = ({ value, label }) => {

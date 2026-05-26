@@ -1,17 +1,19 @@
-import Home from "../Home";
+import Home, { HomeBlog } from "../Home";
 import Services from "../../Services/Services";
 import Resume from "../../Resume/Resume";
 import Work from "../../Work/Work";
 import Contact from "../../Contact/Contact";
 
-const MainHome = () => {
+const MainHome = ({ initialProjects = [], initialPosts = [] }) => {
   return (
     <div>
-      <Home></Home>
+      <Home initialPosts={initialPosts} />
       <Services></Services>
       <Resume></Resume>
 
-      <Work></Work>
+      <Work initialProjects={initialProjects}></Work>
+
+      <HomeBlog initialPosts={initialPosts} />
 
       <div className="pb-12">
         <Contact></Contact>

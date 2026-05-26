@@ -11,13 +11,15 @@ CREATE TABLE IF NOT EXISTS projects (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
-  stack TEXT NOT NULL,
-  live_url TEXT,
-  repo_url TEXT,
-  image_key TEXT,
+  category TEXT NOT NULL DEFAULT 'Web',
+  responsibilities TEXT NOT NULL DEFAULT '[]',
+  techStack TEXT NOT NULL DEFAULT '[]',
+  liveDemo TEXT,
+  github TEXT,
+  thumb TEXT,
   featured INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'draft',
-  sort_order INTEGER NOT NULL DEFAULT 0,
+  sortOrder INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -53,6 +55,24 @@ CREATE TABLE IF NOT EXISTS users (
   role TEXT NOT NULL DEFAULT 'client',
   status TEXT NOT NULL DEFAULT 'active',
   plan TEXT NOT NULL DEFAULT 'basic',
+  last_seen TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS clients (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  relationship TEXT NOT NULL DEFAULT 'client',
+  company TEXT,
+  phone TEXT,
+  website TEXT,
+  location TEXT,
+  status TEXT NOT NULL DEFAULT 'active',
+  engagement TEXT NOT NULL DEFAULT 'standard',
+  notes TEXT,
+  completed_projects TEXT NOT NULL DEFAULT '[]',
   last_seen TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP

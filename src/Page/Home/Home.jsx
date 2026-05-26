@@ -1,8 +1,9 @@
 "use client";
 
+import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from "../../components/ui/button";
 import { FiDownload } from "react-icons/fi";
-import Link from "next/link";
 import Social from "../../components/Social";
 import Photo from "../../components/Photo";
 import Stats from "../../components/Stats";
@@ -18,7 +19,29 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
-const Home = () => {
+function stripHtml(value) {
+  return String(value || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function formatDate(value) {
+  if (!value) return 'recently';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function slugify(value) {
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+const Home = ({ initialPosts = [] }) => {
   return (
     <section className="h-full">
       <div className="container mx-auto h-full">
@@ -97,5 +120,96 @@ const Home = () => {
     </section>
   );
 };
+
+export function HomeBlog({ initialPosts = [] }) {
+  const latestPosts = Array.isArray(initialPosts) ? initialPosts.slice(0, 3) : [];
+
+  return (
+    <section className="mt-14 lg:mt-20">
+      <div className="container mx-auto px-4">
+        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">Latest Writing</p>
+            <h2 className="mt-2 text-3xl font-semibold text-white md:text-4xl">Recent blog posts and project notes</h2>
+            <p className="mt-3 text-sm leading-7 text-[#c6d2e2] md:text-base">
+              Short updates, tutorials, and deeper technical notes from the work I build and publish.
+            </p>
+          </div>
+
+          <Link
+            href="/blog"
+            className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-accent transition hover:bg-white/10"
+          >
+            <span>View all posts</span>
+            <span>→</span>
+          </Link>
+        </div>
+
+        {latestPosts.length === 0 ? (
+          <div className="rounded-3xl border border-white/10 bg-[#0b1725]/80 p-6 text-sm text-[#c6d2e2] backdrop-blur-sm">
+            No blog posts have been published yet.
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {latestPosts.map((post) => {
+              const tags = Array.isArray(post.tags) ? post.tags : [];
+              const preview = stripHtml(post.excerpt || post.body).slice(0, 140) || 'Read the full post for more details.';
+
+              return (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug || slugify(post.title)}`}
+                  className="group overflow-hidden rounded-[28px] border border-white/10 bg-[#0c1826]/80 shadow-[0_14px_40px_rgba(2,6,23,0.45)] backdrop-blur-sm transition hover:-translate-y-1 hover:border-accent/25"
+                >
+                  <div className="relative h-52 overflow-hidden bg-slate-900">
+                    {post.thumb ? (
+                      <Image
+                        src={post.thumb}
+                        alt={post.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover transition duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-xs uppercase tracking-[0.24em] text-white/35">
+                        No Cover Image
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#08131e]/85 via-transparent to-transparent" />
+                    {post.featured ? (
+                      <span className="absolute left-4 top-4 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                        Featured
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-4 p-5">
+                    <div className="flex items-center justify-between gap-3 text-xs text-white/45">
+                      <span>{formatDate(post.updatedAt || post.createdAt)}</span>
+                      <span>{tags.length} tag{tags.length === 1 ? '' : 's'}</span>
+                    </div>
+
+                    <h3 className="line-clamp-2 text-2xl font-semibold tracking-tight text-white">{post.title}</h3>
+                    <p className="line-clamp-3 text-sm leading-7 text-white/65">{preview}</p>
+
+                    {tags.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {tags.slice(0, 3).map((tag) => (
+                          <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
 
 export default Home;

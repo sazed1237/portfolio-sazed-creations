@@ -1,6 +1,52 @@
-# Sazed Creations — Portfolio (Next.js)
+# Sazedul Islam — Portfolio (Next.js)
 
 A personal portfolio site built with **Next.js**, React, Tailwind CSS, Framer Motion transitions, Radix UI (shadcn-style components), and Swiper.
+
+
+
+
+## Seeding the database
+
+A small idempotent seeder is included to populate the `services` catalog into Cloudflare D1.
+
+How it works
+- The script reads the catalog from `src/helpers/servicesData.js`.
+- It runs `CREATE TABLE IF NOT EXISTS services (...)` so the table is created when missing.
+- For each service the script checks by `title` and will `UPDATE` if found or `INSERT` if not — this keeps the seed idempotent.
+
+Run the seeder
+1. Make sure your `.env` at the repo root contains `CF_ACCOUNT_ID`, `CF_API_TOKEN`, and `D1_DATABASE_ID`.
+2. Install dev dependencies (to ensure `dotenv` is available):
+```bash
+npm install
+```
+3. Run the seeder:
+```bash
+npm run seed:d1
+```
+
+Behavior
+- First run: creates the `services` table (if missing) and inserts seed rows.
+- Re-running: updates existing rows (matching on `title`) and inserts new ones; no duplicates are created.
+
+Quick verification
+- Local API (after `npm run dev`):
+```bash
+curl http://localhost:3000/api/services
+```
+- Direct D1 query (uses env vars):
+```bash
+curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/d1/database/$D1_DATABASE_ID/query" \
+	-H "Authorization: Bearer $CF_API_TOKEN" \
+	-H "Content-Type: application/json" \
+	-d '{"sql":"SELECT id,title,tier,price,turnaround,status,sort_order FROM services ORDER BY sort_order"}'
+```
+
+Options you can add
+- `--prune`: remove DB rows not present in the seed (sync mode).
+- Use a stable `slug` field instead of `title` for matching/upserts (recommended for production).
+
+
 
 ## Pages / Routes
 
@@ -19,7 +65,7 @@ Routes are defined in the Next.js app router under [src/app/](src/app/):
 - **Animation:** Framer Motion
 - **Slider:** Swiper
 - **Data:** Cloudflare D1 for structured records
-- **Files:** Cloudflare R2 for uploads and media assets
+- **Files:** imgBB for project image uploads and hosted media URLs
 - **HTTP:** `fetch` + Next.js Route Handlers
 
 ## Scripts
@@ -60,15 +106,13 @@ Used by [src/Page/Contact/Contact.jsx](src/Page/Contact/Contact.jsx).
 The planned admin backend uses Cloudflare bindings instead of a separate premium backend.
 
 - `CF_ACCOUNT_ID`, `CF_API_TOKEN`, `D1_DATABASE_ID` — required for the Next.js route handlers to query D1 directly during local/server-side development
-- `R2_BUCKET_NAME` — keep aligned with the `ASSETS` binding in [wrangler.toml](wrangler.toml)
-- `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` — optional if you later use S3-compatible R2 uploads from Node.js
+- `IMGBB_API_KEY` — required for uploading project images to imgBB from the admin dashboard
 - `ADMIN_SESSION_SECRET` — server-only secret for auth/session signing
 - `ADMIN_PASSWORD` — temporary password for the initial simple login flow
 
 Cloudflare deployment bindings already live in [wrangler.toml](wrangler.toml):
 
 - `DB` for D1
-- `ASSETS` for R2
 
 ### Security warning (important)
 
@@ -88,14 +132,14 @@ This portfolio is designed to stay on the free Cloudflare path:
 
 - **App:** Next.js hosted on Cloudflare
 - **Database:** D1 for projects, services, messages, settings, and admin records
-- **Storage:** R2 for project images, PDF assets, and uploaded media
+- **Storage:** imgBB for project images, D1 for structured data
 - **Admin:** Next.js Route Handlers inside the same repo
 
 Current implementation status:
 
 - D1-backed admin overview, projects, services, stats, and settings routes are wired.
 - Projects and services support create, edit, and delete from the admin dashboard.
-- The R2 binding is configured in [wrangler.toml](wrangler.toml) and ready for the upcoming upload flow.
+- Project images are uploaded to imgBB from the admin dashboard and the returned URL is stored in D1.
 
 Implementation notes are documented in [docs/free-stack-plan.md](docs/free-stack-plan.md).
 
@@ -104,6 +148,6 @@ Implementation notes are documented in [docs/free-stack-plan.md](docs/free-stack
 - Build: `npm run build`
 - Start production server: `npm start`
 
-For the free deployment path, use Cloudflare with the OpenNext adapter, then bind D1 and R2 in `wrangler`.
+For the free deployment path, use Cloudflare with the OpenNext adapter, then bind D1 in `wrangler` and set `IMGBB_API_KEY` for project uploads.
 
 See [docs/free-stack-plan.md](docs/free-stack-plan.md) for the rollout plan.

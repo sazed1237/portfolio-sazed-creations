@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { BsArrowUpRight } from 'react-icons/bs';
-import { projects } from '../../components/Projects';
+import { projects } from '../../data/projectsData.js';
 
 const ITEMS_PER_PAGE = 9; // 3 per row x 3 rows
 
@@ -15,8 +15,11 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 
-const Work = () => {
-  const projectItems = useMemo(() => projects?.items ?? [], []);
+const Work = ({ initialProjects = [] }) => {
+  const projectItems = useMemo(
+    () => (initialProjects.length > 0 ? initialProjects : projects?.items ?? []),
+    [initialProjects]
+  );
   const [page, setPage] = useState(1);
 
   const totalPages = Math.max(1, Math.ceil(projectItems.length / ITEMS_PER_PAGE));
@@ -49,7 +52,7 @@ const Work = () => {
         <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {paged.map((item, idx) => {
             const title = item.title || item.name || '';
-            const slug = slugify(title || item.num || `project-${(page - 1) * ITEMS_PER_PAGE + idx}`);
+            const slug = item.slug || slugify(title || item.num || `project-${(page - 1) * ITEMS_PER_PAGE + idx}`);
             return (
               <Link key={slug} href={`/projects/${slug}`}>
                 <motion.div
@@ -58,7 +61,13 @@ const Work = () => {
                   className="group block relative h-full overflow-hidden rounded-2xl border border-white/10 bg-[#0c1826]/80 backdrop-blur-sm shadow-[0_14px_35px_rgba(2,6,23,0.45)] transition-all duration-300 hover:border-accent/40 hover:shadow-[0_20px_48px_rgba(2,6,23,0.65)]"
                 >
                   <div className="relative h-52 w-full overflow-hidden rounded-t-2xl">
-                    <Image src={item.thumb} alt={title} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    {item.thumb ? (
+                      <Image src={item.thumb} alt={title} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-xs uppercase tracking-[0.24em] text-white/35">
+                        No Preview
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#08131e]/75 to-transparent" />
                     <div className="absolute top-3 right-3 rounded-full border border-accent bg-[#04131f]/50 px-3 py-1 text-accent text-sm font-extrabold tracking-wide ring-1 ring-accent/60 shadow-[0_0_0_1px_rgba(102,224,196,0.35),0_0_26px_rgba(102,224,196,0.45)] transition-transform duration-300 group-hover:scale-105">
                       #{item.num}
@@ -81,7 +90,7 @@ const Work = () => {
                     <p className="text-white/65 text-sm mt-1 line-clamp-3 leading-relaxed">{item.description}</p>
 
                     <div className="mt-4 flex flex-wrap items-center gap-2">
-                      {(item.techStack || item.stack || []).slice(0, 4).map((t, i) => (
+                      {(item.techStack || []).slice(0, 4).map((t, i) => (
                         <span key={i} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/80">
                           {typeof t === 'string' ? t : t.name}
                         </span>

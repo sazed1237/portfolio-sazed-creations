@@ -2,8 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import sazedImage from '../assets/Sazedul Islam.png';
-// import sazedImage from '../assets/sazed1.jpg';
+import sazedul_image from '../assets/Sazedul Islam.png';
 
 const Photo = () => {
     return (
@@ -20,7 +19,7 @@ const Photo = () => {
                     <div className='bg-white/3 rounded-[10px] p-3 shadow-[0_30px_60px_rgba(2,8,20,0.35)]'>
                         <div className='bg-white rounded-[6px] p-2'>
                             <div className='w-[160px] h-[160px] sm:w-[220px] sm:h-[220px] lg:w-[350px] lg:h-[350px] overflow-hidden rounded-sm bg-[#07101b]'>
-                                <Image src={sazedImage} priority fill alt='Sazedul Islam — Backend Developer' className='object-cover' />
+                                <Image src={sazedul_image} priority fill alt='Sazedul Islam — Backend Developer' className='object-cover' />
                                 <div className='pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/20 mix-blend-overlay' />
                             </div>
                         </div>

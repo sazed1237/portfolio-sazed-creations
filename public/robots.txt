@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://sazedulislam.me/sitemap.xml
-
-# If you need private paths, disallow them here, e.g.
-# Disallow: /admin

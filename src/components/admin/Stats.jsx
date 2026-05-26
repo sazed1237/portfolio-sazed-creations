@@ -69,10 +69,18 @@ export default function Stats() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metricCards.map((metric) => (
           <article key={metric.label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm text-slate-500">{metric.label}</p>
-            <div className="mt-2 flex items-end justify-between gap-3">
+            <div className="flex items-start justify-between">
+              <p className="text-sm text-slate-500">{metric.label}</p>
+              <div className="text-right">
+                <p className="text-xs text-slate-400">{metric.delta}</p>
+              </div>
+            </div>
+
+            <div className="mt-3 flex items-end justify-between gap-3">
               <p className="text-3xl font-semibold text-slate-900">{metric.value}</p>
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">{metric.delta}</span>
+              <span className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-xs font-medium ${metric.tone === 'emerald' ? 'bg-emerald-50 text-emerald-700' : metric.tone === 'sky' ? 'bg-sky-50 text-sky-700' : metric.tone === 'violet' ? 'bg-violet-50 text-violet-700' : 'bg-amber-50 text-amber-700'}`}>
+                {metric.tone === 'emerald' ? '▲' : metric.tone === 'amber' ? '◼' : '•'}
+              </span>
             </div>
           </article>
         ))}

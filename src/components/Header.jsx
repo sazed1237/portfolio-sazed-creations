@@ -12,8 +12,9 @@ const Header = () => {
             <div className='container mx-auto flex  items-center justify-between'>
                 {/* logo */}
                 <Link href={'/'}>
-                    <h1 className='text-2xl md:text-4xl font-semibold tracking-tight'>
-                        Sazed <span className='text-sm text-accent md:text-xl'>Creations</span>
+                    <h1 className='text-2xl md:text-4xl font-semibold tracking-wide'>
+                        SazeD
+                        {/* Sazed <span className='text-sm text-accent md:text-xl'>Creations</span> */}
                     </h1>
                 </Link>
 

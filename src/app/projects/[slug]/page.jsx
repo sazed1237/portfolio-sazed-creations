@@ -1,7 +1,28 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { projects } from '@/components/Projects';
+import { getPublicProjects } from '@/lib/cloudflare-d1';
 import { notFound } from 'next/navigation';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://sazedulislam.me';
+
+export async function generateMetadata({ params }) {
+  const { slug } = params;
+  const projects = await getPublicProjects();
+  const item = (projects.items ?? []).find((it) => {
+    const s = String(it.title || it.name || it.num || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    return s === slug;
+  });
+
+  if (!item) return { title: 'Project' };
+
+  const description = item.description || `${item.title} — project by Sazedul Islam.`;
+  return {
+    title: item.title,
+    description,
+    alternates: { canonical: `${SITE_URL}/projects/${slug}` },
+    openGraph: { title: item.title, description, url: `${SITE_URL}/projects/${slug}`, images: item.thumb ? [{ url: item.thumb }] : undefined },
+  };
+}
 
 const slugify = (s) =>
   String(s ?? '')
@@ -9,15 +30,16 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 
-export default function ProjectDetail({ params }) {
-  const { slug } = params;
+export default async function ProjectDetail({ params }) {
+  const { slug } = await params;
 
-  const item = projects.items.find((it) => slugify(it.title || it.name || it.num) === slug);
+  const projects = await getPublicProjects();
+  const item = (projects.items ?? []).find((it) => slugify(it.title || it.name || it.num) === slug);
   if (!item) return notFound();
 
   const title = item.title || item.name || '';
-  const liveUrl = item.liveDemo || item.live || '';
-  const techItems = (item.techStack || item.stack || []).map((s) =>
+  const liveUrl = item.liveDemo || '';
+  const techItems = (item.techStack || []).map((s) =>
     typeof s === 'string' ? s : s?.name
   ).filter(Boolean);
   const responsibilities = item.responsibilities || [];
@@ -27,6 +49,14 @@ export default function ProjectDetail({ params }) {
       <div className="pointer-events-none absolute -top-16 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full bg-accent/15 blur-3xl" />
 
       <div className="container mx-auto px-4">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'CreativeWork',
+          'name': title,
+          'description': item.description || '',
+          'url': `${SITE_URL}/projects/${slugify(title)}`,
+          'image': item.thumb || undefined,
+        }) }} />
         <div className="mb-6 flex items-center justify-between gap-4">
           <Link
             href="/projects"
@@ -53,13 +83,19 @@ export default function ProjectDetail({ params }) {
 
               <h1 className="text-3xl font-bold leading-tight md:text-4xl">{title}</h1>
               <p className="mt-4 text-white/72 leading-relaxed">
-                A polished look at the product vision, architecture, and implementation behind this project, with a focus on how it was built to feel reliable, scalable, and production-ready.
+                {item.description || 'No description provided for this project.'}
               </p>
             </div>
 
             <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0c1826]/75 shadow-[0_14px_40px_rgba(2,6,23,0.45)]">
               <div className="relative h-64 w-full md:h-96 lg:h-[520px]">
-                <Image src={item.thumb} alt={title} fill className="object-cover" priority />
+                {item.thumb ? (
+                  <Image src={item.thumb} alt={title} fill sizes="(max-width: 768px) 100vw, 75vw" className="object-cover" priority />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-sm uppercase tracking-[0.24em] text-white/35">
+                    No Preview Available
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#08131e]/70 via-transparent to-transparent" />
                 {/* <div className="absolute left-4 bottom-4 max-w-[80%] rounded-xl border border-white/10 bg-[#06111c]/80 px-4 py-3 backdrop-blur-sm">
                   <p className="text-xs uppercase tracking-[0.22em] text-accent/85">Visual Preview</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { Input } from '../../components/ui/input';
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Textarea } from '../../components/ui/textarea';
 import { Button } from '../../components/ui/button';
 import Social from '../../components/Social';
-import { services } from '../../helpers/servicesData';
+import { services as fallbackServices } from '../../helpers/servicesData';
 
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
@@ -47,7 +47,7 @@ const info = [
 ]
 
 const Contact = () => {
-    const serviceOptions = services ?? [];
+    const [serviceOptions, setServiceOptions] = useState(fallbackServices ?? []);
 
     const [form, setForm] = useState({
         firstName: '',
@@ -58,6 +58,31 @@ const Contact = () => {
         message: '',
     });
     const [status, setStatus] = useState({ state: 'idle', message: '' });
+
+    useEffect(() => {
+        let active = true;
+
+        async function loadServiceOptions() {
+            try {
+                const response = await fetch('/api/services', { cache: 'no-store' });
+                const payload = await response.json();
+
+                if (response.ok && Array.isArray(payload?.items) && payload.items.length > 0) {
+                    if (active) {
+                        setServiceOptions(payload.items);
+                    }
+                }
+            } catch (error) {
+                console.warn('Failed to load live service options, using fallback list:', error);
+            }
+        }
+
+        loadServiceOptions();
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     const onChange = (key) => (e) => {
         setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -208,7 +233,7 @@ const Contact = () => {
                                     <SelectGroup>
                                         <SelectLabel>What do you need?</SelectLabel>
                                         {serviceOptions.map((service) => (
-                                            <SelectItem key={service.num} value={service.title}>
+                                            <SelectItem key={service.id ?? service.num ?? service.title} value={service.title}>
                                                 {service.title}
                                             </SelectItem>
                                         ))}

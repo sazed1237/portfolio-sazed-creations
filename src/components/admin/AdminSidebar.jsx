@@ -32,8 +32,9 @@ export default function AdminSidebar({ active, setActive }) {
   const items = [
     { id: 'overview', label: 'Overview' },
     { id: 'messages', label: 'Inbox' },
-    { id: 'users', label: 'Users' },
+    { id: 'users', label: 'Clients' },
     { id: 'projects', label: 'Projects' },
+    { id: 'blog', label: 'Blog' },
     { id: 'services', label: 'Services' },
     { id: 'stats', label: 'Stats' },
     { id: 'settings', label: 'Settings' },

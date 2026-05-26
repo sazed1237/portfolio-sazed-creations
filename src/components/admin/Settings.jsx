@@ -55,6 +55,8 @@ export default function Settings() {
     setSecurity(data.security);
   }, [data]);
 
+  const actionLog = data?.actionLog ?? [];
+
   const quickSettings = [
     { label: 'Maintenance Mode', value: security?.maintenanceMode ? 'On' : 'Off' },
     { label: 'Public Contact Form', value: security?.publicContactForm ? 'Enabled' : 'Disabled' },
@@ -306,9 +308,13 @@ export default function Settings() {
           <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900">Action Log</h3>
             <ul className="mt-4 space-y-3 text-sm text-slate-600">
-              <li className="rounded-xl bg-slate-50 px-4 py-3">Brand colors updated 2 weeks ago</li>
-              <li className="rounded-xl bg-slate-50 px-4 py-3">Notification digest enabled yesterday</li>
-              <li className="rounded-xl bg-slate-50 px-4 py-3">Session timeout refreshed today</li>
+              {actionLog && actionLog.length > 0 ? (
+                actionLog.map((entry, idx) => (
+                  <li key={idx} className="rounded-xl bg-slate-50 px-4 py-3 break-words">{entry}</li>
+                ))
+              ) : (
+                <li className="rounded-xl bg-slate-50 px-4 py-3">No actions recorded yet.</li>
+              )}
             </ul>
           </article>
         </aside>

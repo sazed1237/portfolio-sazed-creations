@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { BsArrowDownRight } from "react-icons/bs";
@@ -36,6 +37,40 @@ const cardVariants = {
 };
 
 const Services = () => {
+  const [catalog, setCatalog] = useState(services);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadServices() {
+      try {
+        const response = await fetch("/api/services", { cache: "no-store" });
+        const payload = await response.json();
+
+        if (response.ok && Array.isArray(payload?.items) && payload.items.length > 0) {
+          if (active) {
+            setCatalog(payload.items);
+          }
+        }
+      } catch (error) {
+        console.warn("Failed to load live services, using fallback catalog:", error);
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadServices();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const visibleServices = catalog.length > 0 ? catalog : services;
+
   return (
     <section className="min-h-[90vh] flex flex-col justify-center py-16 lg:py-20 bg-gradient-to-b from-[#06111c] via-[#0a1628] to-[#07101b] relative overflow-hidden">
       {/* Subtle Background Glow */}
@@ -53,6 +88,11 @@ const Services = () => {
             Services
           </h2>
           <p className="text-accent text-lg">What I specialize in</p>
+          <p className="mt-2 max-w-2xl text-sm text-[#bcd3e6]">
+            {loading
+              ? "Loading the live service catalog..."
+              : "Live service packages backed by the same catalog used in the admin dashboard."}
+          </p>
         </motion.div>
 
         {/* Services Grid */}
@@ -62,11 +102,12 @@ const Services = () => {
           animate="show"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
         >
-          {services.map((service, index) => {
+          {visibleServices.map((service, index) => {
             const IconComponent = serviceIcons[index] || FaServer;
+            const contactHref = service.href || `/contact?service=${encodeURIComponent(service.title)}`;
             return (
               <motion.article
-                key={index}
+                key={service.id ?? service.num ?? service.title ?? index}
                 variants={cardVariants}
                 whileHover={{ y: -8 }}
                 className="group relative h-full overflow-hidden rounded-xl bg-gradient-to-br from-[#0f1419] to-[#07101b] border border-white/5 p-8 shadow-lg transition-all duration-300 hover:border-accent/30 hover:shadow-[0_0_30px_rgba(102,224,196,0.1)]"
@@ -100,6 +141,24 @@ const Services = () => {
                     {service.title}
                   </h3>
 
+                  <div className="mb-4 flex flex-wrap gap-2 text-xs">
+                    {service.tier ? (
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/75">
+                        {service.tier}
+                      </span>
+                    ) : null}
+                    {service.price ? (
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/75">
+                        {service.price}
+                      </span>
+                    ) : null}
+                    {service.turnaround ? (
+                      <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/75">
+                        {service.turnaround}
+                      </span>
+                    ) : null}
+                  </div>
+
                   {/* Description */}
                   <p className="text-sm lg:text-base text-[#bcd3e6] leading-relaxed flex-1 mb-6 group-hover:text-white transition-colors duration-300">
                     {service.description}
@@ -111,7 +170,7 @@ const Services = () => {
                     whileTap={{ scale: 0.95 }}
                   >
                     <Link
-                      href={service.href || "/contact"}
+                      href={contactHref}
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-accent to-[#43c6ad] text-[#06111c] font-medium text-sm hover:shadow-lg hover:shadow-accent/30 transition-all duration-300 group-hover:gap-3"
                     >
                       <span>Talk about it</span>
